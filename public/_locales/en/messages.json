@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Channel Landing"
+  },
+  "extDescription": {
+    "message": "Opens the tab you choose (Videos, Live, Playlists...) when you visit a YouTube channel. One preference per channel."
+  }
+}

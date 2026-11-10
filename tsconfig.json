@@ -1,0 +1,17 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "entrypoints",
+    "components",
+    "lib",
+    "tests",
+    "*.config.ts",
+    ".wxt/wxt.d.ts"
+  ]
+}
