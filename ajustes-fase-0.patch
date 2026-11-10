@@ -1,0 +1,58 @@
+diff --git a/package.json b/package.json
+index bdf7af3..103a0bd 100644
+--- a/package.json
++++ b/package.json
+@@ -44,7 +44,7 @@
+     "@eslint/js": "^9.17.0",
+     "@playwright/test": "^1.49.0",
+     "@tailwindcss/vite": "^4.0.0",
+-    "@testing-library/jest-dom": "^6.6.0",
++    "@testing-library/jest-dom": "~6.9.1",
+     "@testing-library/react": "^16.1.0",
+     "@types/node": "^22.10.0",
+     "@types/react": "^19.0.0",
+diff --git a/tests/unit/utils.test.ts b/tests/unit/utils.test.ts
+index cc331b7..993666f 100644
+--- a/tests/unit/utils.test.ts
++++ b/tests/unit/utils.test.ts
+@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
+ 
+ describe('cn', () => {
+   it('junta classes e ignora valores falsos', () => {
+-    expect(cn('a', false && 'b', undefined, 'c')).toBe('a c');
++    expect(cn('a', { b: false }, undefined, 'c')).toBe('a c');
+   });
+ 
+   it('resolve conflitos do Tailwind mantendo a última classe', () => {
+diff --git a/vitest.config.ts b/vitest.config.ts
+index 9c804a3..ad5e7ff 100644
+--- a/vitest.config.ts
++++ b/vitest.config.ts
+@@ -1,8 +1,13 @@
+ import { defineConfig } from 'vitest/config';
+ import { WxtVitest } from 'wxt/testing';
+ 
++// O WXT usa Vite 8 e o Vitest 3 usa Vite 7, então os tipos de plugin não batem.
++// Em execução funciona (os testes passam); o cast só cala o erro de tipo.
++// Remover quando o Vitest for atualizado para uma versão que use Vite 8.
++const wxtVitest = WxtVitest() as never;
++
+ export default defineConfig({
+-  plugins: [WxtVitest()],
++  plugins: [wxtVitest],
+   test: {
+     environment: 'jsdom',
+     globals: true,
+diff --git a/wxt.config.ts b/wxt.config.ts
+index a6d7d05..8ff3a74 100644
+--- a/wxt.config.ts
++++ b/wxt.config.ts
+@@ -16,6 +16,8 @@ export default defineConfig({
+     browser_specific_settings: {
+       gecko: {
+         id: 'channel-landing@jonatas-melo-silva.github.io',
++        // A extensão não coleta dado nenhum. O Firefox exige essa declaração em extensões novas.
++        data_collection_permissions: { required: ['none'] },
+       },
+     },
+   },

@@ -16,6 +16,8 @@ export default defineConfig({
     browser_specific_settings: {
       gecko: {
         id: 'channel-landing@jonatas-melo-silva.github.io',
+        // A extensão não coleta dado nenhum. O Firefox exige essa declaração em extensões novas.
+        data_collection_permissions: { required: ['none'] },
       },
     },
   },

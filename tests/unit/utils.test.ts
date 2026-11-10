@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 describe('cn', () => {
   it('junta classes e ignora valores falsos', () => {
-    expect(cn('a', false && 'b', undefined, 'c')).toBe('a c');
+    expect(cn('a', { b: false }, undefined, 'c')).toBe('a c');
   });
 
   it('resolve conflitos do Tailwind mantendo a última classe', () => {
