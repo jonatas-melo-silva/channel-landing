@@ -4,7 +4,7 @@ Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu 
 
 ## Status
 
-Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 0, o ambiente de desenvolvimento: o popup existe, mas ainda não redireciona nada. O redirecionamento chega na fase 2. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
+Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 1, a lógica que decide para onde cada URL deve ir, já com testes. O popup existe, mas ainda não redireciona nada. O redirecionamento chega ao navegador na fase 2. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
 
 ## Como vai funcionar
 

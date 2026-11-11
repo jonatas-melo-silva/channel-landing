@@ -81,7 +81,8 @@ channel-landing/
     handle.ts            (normalização do handle)
     redirect.ts          (resolveTarget: função pura)
     rules.ts             (buildRules: função pura)
-    storage.ts           (mapa handle -> página)
+    preferences.ts       (mapa handle -> página: funções puras)
+    storage.ts           (leitura e escrita em storage.local)
     channel.ts           (extração de dados e abas do canal)
     author.ts            (nome e URL do repositório do rodapé)
   public/_locales/
