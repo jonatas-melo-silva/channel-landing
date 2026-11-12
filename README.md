@@ -4,7 +4,7 @@ Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu 
 
 ## Status
 
-Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 1, a lógica que decide para onde cada URL deve ir, já com testes. O popup existe, mas ainda não redireciona nada. O redirecionamento chega ao navegador na fase 2. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
+Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 2: o redirecionamento já funciona em Chromium, com testes automáticos, e falta confirmar no Firefox. O popup ainda não deixa escolher a página de cada canal, o que chega na fase 4. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
 
 ## Como vai funcionar
 
@@ -32,6 +32,20 @@ Outros comandos:
 | `pnpm test:e2e`  | Gera o build e roda os testes e2e             |
 | `pnpm build`     | Gera o build para Chromium em `.output`       |
 | `pnpm zip`       | Gera o `.zip` do build (`zip:firefox` também) |
+
+Os testes e2e abrem um Chromium de verdade com a extensão carregada e um servidor HTTPS local no lugar do YouTube, então não acessam a internet. Na primeira vez, instale o navegador do Playwright com `pnpm exec playwright install chromium`. Eles também precisam do `openssl` no sistema. O Firefox não entra nos testes automáticos, porque o Playwright não carrega extensões nele, e segue o [checklist manual](docs/checklist-manual.md).
+
+## Permissões
+
+| Permissão                   | Para que serve                                                           |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `storage`                   | Guardar a página escolhida para cada canal.                              |
+| `declarativeNetRequest`     | Redirecionar ao abrir o canal, antes de a página de início aparecer.     |
+| `webNavigation`             | Perceber quando você entra num canal clicando dentro do próprio YouTube. |
+| `scripting`                 | Trocar o endereço da aba, sem deixar a página de início no botão Voltar. |
+| `https://www.youtube.com/*` | Aplicar tudo isso somente no YouTube.                                    |
+
+O navegador descreve a permissão `webNavigation` como "ler o histórico de navegação". A extensão só olha endereços de `www.youtube.com` e não envia nada para fora do navegador.
 
 ## Contribuição
 

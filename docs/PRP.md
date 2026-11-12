@@ -54,7 +54,7 @@ Chave de um canal: o handle em minúsculas e decodificado (`@KipperDev` e `@kipp
 Como o redirecionamento funciona:
 
 1. Carga completa da página (digitar URL, link de fora, favorito): regras dinâmicas de `declarativeNetRequest`, só para `main_frame`. Uma regra base manda qualquer `/@handle` ou `/@handle/featured` para `/videos`. Para cada canal com preferência diferente de Vídeos existe uma regra específica de prioridade maior (redirecionando para a aba escolhida, ou apenas permitindo no caso de Início). Todas as regras são geradas por uma função pura `buildRules(prefs)` e reconstruídas sempre que o storage muda.
-2. Navegação interna do YouTube (clicar no canal dentro do site): o YouTube é uma SPA e não faz requisição de rede, então a regra acima não dispara. O service worker escuta `webNavigation.onHistoryStateUpdated` e chama `tabs.update` usando a mesma função `resolveTarget`.
+2. Navegação interna do YouTube (clicar no canal dentro do site): o YouTube é uma SPA e não faz requisição de rede, então a regra acima não dispara. O service worker escuta `webNavigation.onHistoryStateUpdated` e redireciona usando a mesma função `resolveTarget`. O redirecionamento troca a entrada atual do histórico (`scripting.executeScript` com `location.replace`), para o botão Voltar não cair de novo na entrada do canal. Se a injeção falhar, usa `tabs.update`.
 3. Anti-prisão: se a aba já estava em outra página do mesmo canal e o usuário clica em "Início" dentro do canal, não redireciona. A regra de SPA só age quando o handle anterior da aba é diferente do atual.
 4. Aba inexistente: o content script, ao chegar na página do canal, lê a lista de abas que o canal tem. Se a aba atual não está nela, faz `location.replace` para `/videos`. Se a própria aba Vídeos não existir, não redireciona de novo (evita loop).
 
@@ -145,7 +145,8 @@ Aceite: testes unitários verdes cobrindo todos os casos acima.
 Tarefas:
 - Service worker sincroniza as regras dinâmicas com o storage (na instalação, na inicialização e a cada mudança).
 - Listener de `webNavigation.onHistoryStateUpdated` para navegação interna.
-- Permissões mínimas: `storage`, `declarativeNetRequest`, `webNavigation`, host `*://www.youtube.com/*`.
+- Permissões mínimas: `storage`, `declarativeNetRequest`, `webNavigation`, `scripting`, host `https://www.youtube.com/*` (só https, que é o que a lógica reconhece).
+- O listener de `webNavigation` também escuta `onCommitted` (carga completa) e funciona como plano B das regras: se o navegador não aplicar o `declarativeNetRequest`, o redirecionamento ainda acontece, com um piscar da página de início.
 - Primeiro passo da fase: validar no Firefox que `regexSubstitution` se comporta como no Brave. Se não, o build do Firefox usa somente `webNavigation` (mais simples, com um piscar da página antes do redirect).
 
 Aceite: no Brave e no Firefox, abrir um canal por link externo, por digitação e por clique interno leva à aba certa daquele canal. Clicar em "Início" dentro do canal funciona. Dois canais com preferências diferentes se comportam de forma independente.

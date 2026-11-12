@@ -16,4 +16,9 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
+  {
+    // O `use` dos fixtures do Playwright não é um hook do React.
+    files: ['tests/e2e/**/*.ts'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
+  },
 );
