@@ -157,8 +157,9 @@ Tarefas:
 - Content script lê nome, avatar, inscritos e total de vídeos.
 - Content script lê quais abas o canal tem.
 - Troca de mensagens com o popup; resposta controlada fora de página de canal.
-- Fallback para `/videos` quando a aba escolhida não existe (regra 4 da seção 4).
-- Normalização dos números (o YouTube abrevia valores e o texto muda com o idioma).
+- Fallback para `/videos` quando a aba escolhida não existe (regra 4 da seção 4). Só age na página que é a preferência do canal e só quando a lista de abas lida tem ao menos duas abas e inclui Vídeos, para nunca desviar por causa de uma leitura incompleta.
+- Os números aparecem como o YouTube escreve (por exemplo "1,2 mi de inscritos"), já no idioma da pessoa. A extensão não converte nem recalcula nada.
+- Fonte dos dados: o JSON `ytInitialData` da página (nome, avatar, inscritos, vídeos e lista de abas). Numa navegação interna, em que a página ainda tem os dados do canal anterior, a extensão baixa a página do canal e lê o mesmo JSON.
 
 Aceite: em canais com e sem Podcasts, Cursos, Loja e Ao vivo, a lista de abas detectada está certa, o fallback leva a Vídeos sem loop e não há erro no console.
 
@@ -211,7 +212,7 @@ Chrome Web Store (que o Brave também usa) e Firefox Add-ons: ícones, descriç�
 - Recarregar a página (F5) em "Início" por escolha explícita redireciona de novo, porque a regra de carga completa não conhece o histórico da aba. Para canais com preferência `home` isso não acontece, pois eles têm regra de permitir. A limitação vale só para canais em Vídeos ou outra aba que o usuário abriu manualmente em Início.
 - Com `storage.local`, as preferências ficam em cada navegador separadamente. `storage.sync` tem limites de tamanho e de quantidade de itens que não combinam com um mapa que cresce a cada canal.
 - Detectar a aba inexistente só acontece depois que a página carrega, então no primeiro acesso a um canal sem a aba há um redirecionamento a mais.
-- Comportamento de `declarativeNetRequest` no Firefox precisa ser confirmado na fase 2.
+- O `declarativeNetRequest` no Firefox foi confirmado na fase 2: o redirecionamento acontece direto, sem piscar.
 
 ## 9. Dados do rodapé (recebidos)
 

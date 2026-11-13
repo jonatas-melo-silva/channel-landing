@@ -44,6 +44,22 @@ Repita os cenários 1 a 4 e confira:
 
 Para voltar ao normal, grave `{ preferences: {} }`. Tudo volta a Vídeos.
 
+## Dados do canal (fase 3)
+
+Essa leitura depende do formato interno do YouTube, que só se confirma em canais de verdade. Com `pnpm dev` ou `pnpm dev:firefox`, o popup mostra um bloco com o JSON do canal da aba ativa. Abra o popup com um canal aberto e confira:
+
+| #   | Canal                                     | Esperado no JSON                                                         |
+| --- | ----------------------------------------- | ------------------------------------------------------------------------ |
+| 1   | Um canal comum, por exemplo `@kipperdev`  | `name`, `avatar`, `subscribers` e `videos` iguais ao que a página mostra |
+| 2   | Um canal com Podcasts, Cursos ou Loja     | `tabs` inclui as abas opcionais que aparecem na página                   |
+| 3   | Um canal sem Ao vivo ou sem Posts         | `tabs` não inclui a aba que não aparece                                  |
+| 4   | De um canal, clicar em outro pelo YouTube | O JSON passa a ser do segundo canal, não do primeiro                     |
+| 5   | Numa página de vídeo ou na página inicial | `{ "ok": false, "reason": "not-channel" }`                               |
+
+Fallback: com o procedimento da seção anterior, grave `{ '@canalsempodcast': 'podcasts' }` (use um canal real que não tenha Podcasts) e abra o canal. Ele deve terminar em `/videos`, sem ficar recarregando, e o Console da aba do YouTube não deve ter erros da extensão.
+
+Se algum campo vier `null` num canal que o mostra na página, anote o canal e o campo no PR: o formato mudou e a leitura precisa de ajuste.
+
 ## Só no Firefox
 
 As regras de `declarativeNetRequest` redirecionam antes de a página aparecer. Se no cenário 1 a página de início aparece por um instante e só depois vai para Vídeos, as regras não estão valendo no Firefox e o listener de navegação está cobrindo (o redirecionamento funciona, mas com um piscar). Para ver se as regras foram registradas, rode no console da página da extensão:
