@@ -7,18 +7,7 @@ import { join, resolve } from 'node:path';
 import { chromium, expect, test as base, type BrowserContext, type Worker } from '@playwright/test';
 import type { Preferences } from '../../lib/preferences';
 import { buildRules } from '../../lib/rules';
-
-// Página servida no lugar do YouTube. `spaGo` imita a navegação interna do YouTube, que
-// troca a URL sem recarregar a página.
-const FAKE_PAGE = `<!doctype html>
-<html><head><meta charset="utf-8"><title>youtube de mentira</title></head>
-<body>
-<p id="path"></p>
-<script>
-  document.getElementById('path').textContent = location.pathname + location.search;
-  window.spaGo = (path) => history.pushState({}, '', path);
-</script>
-</body></html>`;
+import { renderPage } from './fake-youtube';
 
 // Certificado temporário só para este teste, gerado na hora para não guardar chave no Git.
 function createCertificate(dir: string) {
@@ -49,9 +38,9 @@ function createCertificate(dir: string) {
 }
 
 async function startFakeYoutube(dir: string) {
-  const server = https.createServer(createCertificate(dir), (_request, response) => {
+  const server = https.createServer(createCertificate(dir), (request, response) => {
     response.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-    response.end(FAKE_PAGE);
+    response.end(renderPage(new URL(request.url ?? '/', 'https://www.youtube.com').pathname));
   });
   await new Promise<void>((done) => server.listen(0, '127.0.0.1', done));
 
