@@ -188,6 +188,13 @@ Tarefas:
 - Mock de `chrome.*` nos testes unitários.
 - Checklist manual escrito para Brave e Firefox (o Playwright não cobre extensões no Firefox).
 
+Como ficou:
+- Componentes e popup com React Testing Library em `tests/unit/components` (`PageList`, `ChannelHeader`, `Footer` e `App` ligado ao `storage` falso do WXT). Os textos são trocados pela própria chave, então os testes não dependem do idioma.
+- Leitura do canal e fallback para Vídeos em `tests/unit/channel-loader.test.ts`, com `fetch` e `storage` falsos.
+- Mock de `chrome.*` nos testes unitários é o `fakeBrowser` do WXT, usado nos testes de `storage`, do loader e do popup.
+- Playwright cobre o resto: redirecionamento por carga completa e por clique interno, leitura do canal, fallback e popup (`tests/e2e`).
+- Checklist manual para Brave e Firefox em `docs/checklist-manual.md`.
+
 Aceite: `pnpm test` e `pnpm test:e2e` verdes; checklist manual executado nos dois navegadores.
 
 ### Fase 6: CI e release
