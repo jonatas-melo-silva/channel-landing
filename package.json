@@ -26,6 +26,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "wxt build && playwright test",
+    "screenshots": "wxt build && SCREENSHOTS=1 playwright test screenshots.spec",
     "postinstall": "wxt prepare",
     "prepare": "husky"
   },

@@ -215,6 +215,15 @@ Aceite: PR de teste passa no CI; tag `v0.1.0` gera release com os dois `.zip`.
 
 Chrome Web Store (que o Brave também usa) e Firefox Add-ons: ícones, descrição, política de privacidade (a extensão não coleta dados), capturas de tela.
 
+Preparado no repositório:
+- Ícone original em `public/icon` (16, 32, 48, 96 e 128 px), com o desenho em `docs/publicacao/icone.svg` e uma versão com margem para a loja.
+- `docs/PRIVACY.md`: política de privacidade em português e inglês.
+- `docs/publicacao/listagem.md`: textos, finalidade única e justificativa de cada permissão.
+- `docs/publicacao/guia-de-envio.md`: passo a passo para as duas lojas.
+- `pnpm screenshots`: gera as capturas de 1280x800 a partir da extensão real.
+
+Aceite: os zips de cada navegador sobem nas lojas sem pendência de formulário. A aprovação depende da revisão de cada loja.
+
 ## 7. Fora de escopo da v1
 
 - Preferência global ou "padrão geral" configurável (o padrão é fixo em Vídeos).

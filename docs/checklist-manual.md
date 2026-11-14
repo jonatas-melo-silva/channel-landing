@@ -66,6 +66,10 @@ Se algum campo vier vazio num canal que o mostra na página (por exemplo, sem in
 
 Fallback: grave `{ '@canalsempodcast': 'podcasts' }` pelo procedimento da seção anterior (use um canal real que não tenha Podcasts) e abra o canal. Ele deve terminar em `/videos`, sem ficar recarregando, e o Console da aba do YouTube não deve ter erros da extensão. No popup desse canal, Vídeos aparece ligado.
 
+## Ícone (fase 7)
+
+Em `brave://extensions` e em `about:addons`, o ícone da extensão aparece (três abas, a do meio marcada). Na barra do navegador ele fica legível em tamanho pequeno e nos temas claro e escuro.
+
 ## Só no Firefox
 
 As regras de `declarativeNetRequest` redirecionam antes de a página aparecer. Se no cenário 1 a página de início aparece por um instante e só depois vai para Vídeos, as regras não estão valendo no Firefox e o listener de navegação está cobrindo (o redirecionamento funciona, mas com um piscar). Para ver se as regras foram registradas, rode no console da página da extensão:
