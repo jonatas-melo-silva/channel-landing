@@ -4,7 +4,7 @@ Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu 
 
 ## Status
 
-Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 3: o redirecionamento funciona no Brave e no Firefox e a extensão já lê os dados e as abas do canal aberto, com o fallback para Vídeos quando a aba escolhida não existe. O popup ainda não deixa escolher a página de cada canal, o que chega na fase 4. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
+Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 4: o popup já mostra o canal aberto (nome, avatar, inscritos e vídeos), deixa escolher a página que cada canal abre e guarda a escolha por canal. Falta a bateria final de testes de integração e a publicação (fases 5 a 7). O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
 
 ## Como vai funcionar
 

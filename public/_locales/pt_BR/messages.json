@@ -4,5 +4,47 @@
   },
   "extDescription": {
     "message": "Abre a aba que você escolher (Vídeos, Ao vivo, Playlists...) ao entrar em um canal do YouTube. Uma preferência por canal."
+  },
+  "popupLoading": {
+    "message": "Lendo o canal..."
+  },
+  "popupNotChannel": {
+    "message": "Abra um canal do YouTube para escolher em qual aba ele abre."
+  },
+  "popupError": {
+    "message": "Não foi possível ler este canal. Recarregue a aba do YouTube e tente de novo."
+  },
+  "popupPagesLabel": {
+    "message": "Aba que abre"
+  },
+  "popupHowItWorks": {
+    "message": "Cada canal guarda a própria aba. Se a aba escolhida não existir, abre Vídeos."
+  },
+  "popupMadeBy": {
+    "message": "Feito por"
+  },
+  "pageHome": {
+    "message": "Início"
+  },
+  "pageVideos": {
+    "message": "Vídeos"
+  },
+  "pageStreams": {
+    "message": "Ao vivo"
+  },
+  "pagePlaylists": {
+    "message": "Playlists"
+  },
+  "pagePosts": {
+    "message": "Posts"
+  },
+  "pagePodcasts": {
+    "message": "Podcasts"
+  },
+  "pageCourses": {
+    "message": "Cursos"
+  },
+  "pageStore": {
+    "message": "Loja"
   }
 }

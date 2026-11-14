@@ -4,5 +4,47 @@
   },
   "extDescription": {
     "message": "Opens the tab you choose (Videos, Live, Playlists...) when you visit a YouTube channel. One preference per channel."
+  },
+  "popupLoading": {
+    "message": "Reading the channel..."
+  },
+  "popupNotChannel": {
+    "message": "Open a YouTube channel to choose which tab it opens on."
+  },
+  "popupError": {
+    "message": "Could not read this channel. Reload the YouTube tab and try again."
+  },
+  "popupPagesLabel": {
+    "message": "Tab to open"
+  },
+  "popupHowItWorks": {
+    "message": "Each channel remembers its own tab. If the chosen tab does not exist, Videos opens instead."
+  },
+  "popupMadeBy": {
+    "message": "Made by"
+  },
+  "pageHome": {
+    "message": "Home"
+  },
+  "pageVideos": {
+    "message": "Videos"
+  },
+  "pageStreams": {
+    "message": "Live"
+  },
+  "pagePlaylists": {
+    "message": "Playlists"
+  },
+  "pagePosts": {
+    "message": "Posts"
+  },
+  "pagePodcasts": {
+    "message": "Podcasts"
+  },
+  "pageCourses": {
+    "message": "Courses"
+  },
+  "pageStore": {
+    "message": "Store"
   }
 }
