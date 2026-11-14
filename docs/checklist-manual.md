@@ -25,7 +25,7 @@ Sem preferência salva, o padrão é Vídeos.
 
 ## Com preferências
 
-O popup só aceita a escolha a partir da fase 4. Até lá, grave as preferências pelo console de uma página da própria extensão. O console de uma página comum, como a aba do YouTube, não tem `chrome.storage` nem `browser.storage`.
+Para testar um valor específico, grave as preferências pelo console de uma página da própria extensão (o popup faz o mesmo ao ligar um switch). O console de uma página comum, como a aba do YouTube, não tem `chrome.storage` nem `browser.storage`.
 
 - No Brave, copie o ID da extensão em `brave://extensions` (com o modo do desenvolvedor ligado), abra `chrome-extension://ID/popup.html` numa aba e aperte F12.
 - No Firefox, copie o "UUID interno" da extensão em `about:debugging#/runtime/this-firefox`, abra `moz-extension://UUID/popup.html` numa aba e aperte F12.
@@ -44,21 +44,27 @@ Repita os cenários 1 a 4 e confira:
 
 Para voltar ao normal, grave `{ preferences: {} }`. Tudo volta a Vídeos.
 
-## Dados do canal (fase 3)
+## Popup e dados do canal (fases 3 e 4)
 
-Essa leitura depende do formato interno do YouTube, que só se confirma em canais de verdade. Com `pnpm dev` ou `pnpm dev:firefox`, o popup mostra um bloco com o JSON do canal da aba ativa. Abra o popup com um canal aberto e confira:
+A leitura dos dados depende do formato interno do YouTube, que só se confirma em canais de verdade. Com um canal aberto, clique no ícone da extensão e confira:
 
-| #   | Canal                                     | Esperado no JSON                                                         |
-| --- | ----------------------------------------- | ------------------------------------------------------------------------ |
-| 1   | Um canal comum, por exemplo `@kipperdev`  | `name`, `avatar`, `subscribers` e `videos` iguais ao que a página mostra |
-| 2   | Um canal com Podcasts, Cursos ou Loja     | `tabs` inclui as abas opcionais que aparecem na página                   |
-| 3   | Um canal sem Ao vivo ou sem Posts         | `tabs` não inclui a aba que não aparece                                  |
-| 4   | De um canal, clicar em outro pelo YouTube | O JSON passa a ser do segundo canal, não do primeiro                     |
-| 5   | Numa página de vídeo ou na página inicial | `{ "ok": false, "reason": "not-channel" }`                               |
+| #   | Situação                                           | Esperado                                                                    |
+| --- | -------------------------------------------------- | --------------------------------------------------------------------------- |
+| 1   | Um canal comum, por exemplo `@kipperdev`           | Nome, avatar, inscritos e vídeos iguais ao que a página mostra              |
+| 2   | Um canal com Podcasts, Cursos ou Loja              | Os switches dessas abas aparecem                                            |
+| 3   | Um canal sem Podcasts, Cursos e Loja               | Só aparecem Início, Vídeos, Ao vivo, Playlists e Posts                      |
+| 4   | De um canal, clicar em outro pelo YouTube          | O popup mostra o segundo canal, não o primeiro                              |
+| 5   | Numa página de vídeo ou na página inicial          | Mensagem pedindo para abrir um canal, com o rodapé                          |
+| 6   | Ligar Ao vivo                                      | Só Ao vivo fica ligado; clicar nele de novo não desliga                     |
+| 7   | Fechar o popup, reabrir e abrir o canal pela busca | O canal abre em Ao vivo; outro canal continua em Vídeos                     |
+| 8   | Navegar só com Tab e Espaço                        | Cada switch recebe foco visível e Espaço escolhe a página                   |
+| 9   | Tema escuro e claro do navegador                   | O popup acompanha, sem texto ilegível                                       |
+| 10  | Idioma do navegador em português e em inglês       | Textos do popup no idioma certo (Início/Home, Ao vivo/Live, Cursos/Courses) |
+| 11  | Clicar em "Jonatas Melo Silva" no rodapé           | Abre o repositório do GitHub em uma nova aba                                |
 
-Fallback: com o procedimento da seção anterior, grave `{ '@canalsempodcast': 'podcasts' }` (use um canal real que não tenha Podcasts) e abra o canal. Ele deve terminar em `/videos`, sem ficar recarregando, e o Console da aba do YouTube não deve ter erros da extensão.
+Se algum campo vier vazio num canal que o mostra na página (por exemplo, sem inscritos), anote o canal e o campo no PR: o formato mudou e a leitura precisa de ajuste.
 
-Se algum campo vier `null` num canal que o mostra na página, anote o canal e o campo no PR: o formato mudou e a leitura precisa de ajuste.
+Fallback: grave `{ '@canalsempodcast': 'podcasts' }` pelo procedimento da seção anterior (use um canal real que não tenha Podcasts) e abra o canal. Ele deve terminar em `/videos`, sem ficar recarregando, e o Console da aba do YouTube não deve ter erros da extensão. No popup desse canal, Vídeos aparece ligado.
 
 ## Só no Firefox
 

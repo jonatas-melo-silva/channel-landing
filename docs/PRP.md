@@ -173,6 +173,11 @@ Estrutura de cima para baixo, com `Separator` do shadcn entre cada bloco:
 
 Textos vêm de `_locales`. Estados cobertos: popup aberto fora de um canal, carregando, erro ao ler o canal.
 
+Detalhes de implementação:
+- Componentes `Separator`, `Switch` e `Badge` do shadcn em `components/ui`. O `Badge` não tem `asChild`, porque nada no popup precisa dele.
+- Quando a preferência salva é de uma aba que o canal não tem, o popup mostra Vídeos ligado (é para onde a extensão leva), sem apagar a preferência.
+- Os testes e2e abrem `popup.html?tab=ID` numa aba comum, porque o Playwright não clica no ícone da extensão. Sem `?tab`, o popup usa a aba ativa.
+
 Aceite: os três blocos renderizados conforme o desenho, escolha persistida por canal ao fechar e reabrir, navegação por teclado nos switches, textos em português e em inglês conforme o navegador.
 
 ### Fase 5: Testes de integração e e2e

@@ -103,7 +103,11 @@ export const test = base.extend<Fixtures>({
     const context = await chromium.launchPersistentContext(join(dir, 'profile'), {
       channel: 'chromium',
       ignoreHTTPSErrors: true,
+      // Os textos da extensão seguem o idioma do navegador. Os testes procuram os textos em
+      // inglês, então o idioma é fixado e não depende da língua do sistema de quem roda.
+      env: { ...process.env, LANGUAGE: 'en_US', LC_ALL: 'en_US.UTF-8' },
       args: [
+        '--lang=en-US',
         `--disable-extensions-except=${extensionPath}`,
         `--load-extension=${extensionPath}`,
         `--host-resolver-rules=MAP www.youtube.com 127.0.0.1:${youtube.port}`,
