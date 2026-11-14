@@ -2,7 +2,7 @@
 
 Todas as mudanças relevantes do projeto ficam neste arquivo. O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e as versões seguem o [versionamento semântico](https://semver.org/lang/pt-BR/).
 
-## [0.1.0] - ainda sem data
+## [0.1.0] - 2026-11-14
 
 Primeira versão.
 
