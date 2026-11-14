@@ -7,6 +7,11 @@ import { loadPreferences } from './storage';
 
 const cache = new Map<string, ChannelInfo>();
 
+/** Esquece os canais já lidos. Existe para os testes começarem sem estado. */
+export function clearChannelCache(): void {
+  cache.clear();
+}
+
 /** Procura os dados nos scripts da própria página. Só vale numa carga completa. */
 function readFromPage(key: string): unknown {
   for (const script of Array.from(document.scripts)) {
@@ -48,8 +53,10 @@ export async function loadChannel(location: ChannelLocation): Promise<ChannelInf
   return channel;
 }
 
-export async function loadCurrentChannel(): Promise<GetChannelResponse> {
-  const location = parseChannelUrl(window.location.href);
+export async function loadCurrentChannel(
+  href: string = window.location.href,
+): Promise<GetChannelResponse> {
+  const location = parseChannelUrl(href);
   if (location === null) return { ok: false, reason: 'not-channel' };
 
   const channel = await loadChannel(location);
@@ -61,8 +68,11 @@ export async function loadCurrentChannel(): Promise<GetChannelResponse> {
  * Só age na página escolhida para o canal: quem abre outra aba de propósito não é desviado.
  * O destino é Vídeos, que nunca é redirecionado, então não há como entrar em loop.
  */
-export async function applyMissingTabFallback(): Promise<void> {
-  const location = parseChannelUrl(window.location.href);
+export async function applyMissingTabFallback({
+  href = window.location.href,
+  navigate = (url: string) => window.location.replace(url),
+}: { href?: string; navigate?: (url: string) => void } = {}): Promise<void> {
+  const location = parseChannelUrl(href);
   if (location === null || location.page === null) return;
 
   const prefs = await loadPreferences();
@@ -72,5 +82,5 @@ export async function applyMissingTabFallback(): Promise<void> {
   if (channel === null) return;
 
   const target = missingTabTarget(location.page, channel.tabs, location.rawHandle);
-  if (target !== null) window.location.replace(target);
+  if (target !== null) navigate(target);
 }
