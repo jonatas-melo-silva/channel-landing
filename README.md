@@ -1,5 +1,8 @@
 # Channel Landing
 
+[![CI](https://github.com/jonatas-melo-silva/channel-landing/actions/workflows/ci.yml/badge.svg)](https://github.com/jonatas-melo-silva/channel-landing/actions/workflows/ci.yml)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-blue.svg)](LICENSE)
+
 Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu quando você entra no perfil de um canal do YouTube. Hoje o YouTube abre sempre o Início do canal. Com a extensão, `https://www.youtube.com/@kipperdev` leva você para `https://www.youtube.com/@kipperdev/videos`, ou para qualquer outra aba que você tenha definido para aquele canal.
 
 ## Status
@@ -9,6 +12,26 @@ Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e 
 ## Como vai funcionar
 
 Cada canal guarda a própria preferência, e Vídeos é o padrão. O popup da extensão lista as abas do canal aberto (Início, Vídeos, Ao vivo, Playlists, Posts e, quando o canal tiver, Podcasts, Cursos e Loja) e só uma pode ficar escolhida por vez. Se a aba escolhida não existir em algum canal, a extensão leva para Vídeos.
+
+## Instalação
+
+Enquanto a extensão não está nas lojas, ela se instala pelos arquivos da página de [Releases](https://github.com/jonatas-melo-silva/channel-landing/releases).
+
+**Brave e Chrome**
+
+1. Baixe `channel-landing-<versão>-chrome.zip` e extraia numa pasta que você vá manter.
+2. Abra `brave://extensions` (no Chrome, `chrome://extensions`) e ligue o "Modo do desenvolvedor".
+3. Clique em "Carregar sem compactação" e escolha a pasta extraída.
+
+**Firefox**
+
+1. Baixe `channel-landing-<versão>-firefox.zip`.
+2. Abra `about:debugging#/runtime/this-firefox` e clique em "Carregar extensão temporária".
+3. Escolha o arquivo `.zip`. O Firefox remove extensões temporárias quando fecha, então a instalação definitiva depende da versão assinada pela loja do Firefox.
+
+## Uso
+
+Abra o perfil de um canal e clique no ícone da extensão. Ligue a aba em que aquele canal deve abrir. A partir daí, entrar no canal por um link, pela busca ou por um clique dentro do YouTube leva direto a ela. Para voltar ao padrão, ligue Vídeos.
 
 ## Rodar em desenvolvimento
 
@@ -49,7 +72,7 @@ O navegador descreve a permissão `webNavigation` como "ler o histórico de nave
 
 ## Contribuição
 
-O trabalho acontece em branches `feat/*` com pull request para a `main`. Os commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), e um hook do Husky recusa mensagens fora do padrão. Bugs e sugestões vão em [issues](https://github.com/jonatas-melo-silva/channel-landing/issues).
+O trabalho acontece em branches `feat/*` com pull request para a `main`. Os commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), e um hook do Husky recusa mensagens fora do padrão. O CI do GitHub Actions roda formatação, lint, tipos, testes unitários, os dois builds e os testes e2e em cada PR. As mudanças ficam registradas no [CHANGELOG](CHANGELOG.md) e o passo a passo de uma versão está em [docs/release.md](docs/release.md). Bugs e sugestões vão em [issues](https://github.com/jonatas-melo-silva/channel-landing/issues).
 
 ## Licença
 

@@ -204,6 +204,11 @@ Tarefas:
 - Workflow de release por tag: gera os dois `.zip` e anexa ao release.
 - CHANGELOG e README completo (instalação em modo desenvolvedor nos dois navegadores, uso, desenvolvimento, contribuição).
 
+Como ficou:
+- `.github/workflows/ci.yml`: em PRs e na `main`, um job com formatação, lint, tipos, testes, build Chromium e build Firefox, e outro com os testes e2e no Chromium (instalado pelo Playwright).
+- `.github/workflows/release.yml`: ao publicar uma tag `v*`, confere que ela bate com a versão do `package.json`, roda lint, tipos e testes, gera os zips de Chrome e Firefox (mais o zip de código-fonte que o Firefox Add-ons pede) e cria o release.
+- `CHANGELOG.md`, `docs/release.md` e README com instalação nos dois navegadores, uso e desenvolvimento.
+
 Aceite: PR de teste passa no CI; tag `v0.1.0` gera release com os dois `.zip`.
 
 ### Fase 7 (opcional): Publicação
