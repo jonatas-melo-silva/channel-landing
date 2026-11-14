@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" rx="28" fill="#4f46e5"/>
+  <!-- três abas, a do meio é a escolhida -->
+  <rect x="14" y="62" width="28" height="36" rx="9" fill="#fff" fill-opacity="0.45"/>
+  <rect x="86" y="62" width="28" height="36" rx="9" fill="#fff" fill-opacity="0.45"/>
+  <rect x="50" y="62" width="28" height="36" rx="9" fill="#fff"/>
+  <!-- marcador apontando para a aba escolhida -->
+  <path d="M50 28h28L64 48z" fill="#fff" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
+</svg>

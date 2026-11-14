@@ -12,6 +12,14 @@ export default defineConfig({
     name: '__MSG_extName__',
     description: '__MSG_extDescription__',
     default_locale: 'en',
+    // Arquivos em public/icon. A origem do desenho é docs/publicacao/icone.svg.
+    icons: {
+      16: 'icon/16.png',
+      32: 'icon/32.png',
+      48: 'icon/48.png',
+      96: 'icon/96.png',
+      128: 'icon/128.png',
+    },
     // storage: preferências. declarativeNetRequest: redirecionar carga de página.
     // webNavigation: navegação interna do YouTube. scripting: trocar a entrada do histórico.
     permissions: ['storage', 'declarativeNetRequest', 'webNavigation', 'scripting'],

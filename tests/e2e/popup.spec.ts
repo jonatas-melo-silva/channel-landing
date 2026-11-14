@@ -1,37 +1,12 @@
-import type { BrowserContext, Page, Worker } from '@playwright/test';
+import type { Page, Worker } from '@playwright/test';
 import { expect, test } from './fixtures';
+import { openPopup, type ChromeStorageApi } from './popup-page';
 
 const YT = 'https://www.youtube.com';
-
-interface TabsApi {
-  tabs: { query(filter: { url: string }): Promise<{ id?: number }[]> };
-  storage: { local: { get(key: string): Promise<Record<string, unknown>> } };
-}
 
 test.beforeEach(async ({ setPreferences }) => {
   await setPreferences({});
 });
-
-/**
- * Abre o popup numa aba comum (o Playwright não clica no ícone da extensão), apontado para
- * a aba do YouTube que está aberta. É o mesmo código e a mesma página que o popup de verdade.
- */
-async function openPopup(
-  context: BrowserContext,
-  serviceWorker: Worker,
-  youtube: Page,
-): Promise<Page> {
-  const tabId = await serviceWorker.evaluate(async (url) => {
-    const { tabs } = (globalThis as unknown as { chrome: TabsApi }).chrome;
-    const [tab] = await tabs.query({ url });
-    return tab?.id;
-  }, youtube.url());
-  const extensionId = new URL(serviceWorker.url()).host;
-
-  const popup = await context.newPage();
-  await popup.goto(`chrome-extension://${extensionId}/popup.html?tab=${tabId}`);
-  return popup;
-}
 
 const switches = (popup: Page) => popup.getByRole('switch');
 const active = async (popup: Page) =>
@@ -41,7 +16,7 @@ const active = async (popup: Page) =>
 
 async function storedPreferences(serviceWorker: Worker) {
   return serviceWorker.evaluate(async () => {
-    const { storage } = (globalThis as unknown as { chrome: TabsApi }).chrome;
+    const { storage } = (globalThis as unknown as { chrome: ChromeStorageApi }).chrome;
     return (await storage.local.get('preferences')).preferences;
   });
 }

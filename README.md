@@ -7,7 +7,7 @@ Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu 
 
 ## Status
 
-Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 4: o popup já mostra o canal aberto (nome, avatar, inscritos e vídeos), deixa escolher a página que cada canal abre e guarda a escolha por canal. Falta a bateria final de testes de integração e a publicação (fases 5 a 7). O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
+Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 7: a extensão funciona (redirecionamento, leitura do canal e popup) e os materiais de publicação estão prontos: ícone, política de privacidade, textos das lojas e guia de envio. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
 
 ## Como vai funcionar
 
@@ -47,14 +47,15 @@ O `pnpm dev` procura o Brave em `/usr/bin/brave-browser`. Se o seu estiver em ou
 
 Outros comandos:
 
-| Comando          | O que faz                                     |
-| ---------------- | --------------------------------------------- |
-| `pnpm lint`      | Roda o ESLint                                 |
-| `pnpm typecheck` | Confere os tipos com o TypeScript             |
-| `pnpm test`      | Roda os testes unitários (Vitest)             |
-| `pnpm test:e2e`  | Gera o build e roda os testes e2e             |
-| `pnpm build`     | Gera o build para Chromium em `.output`       |
-| `pnpm zip`       | Gera o `.zip` do build (`zip:firefox` também) |
+| Comando            | O que faz                                     |
+| ------------------ | --------------------------------------------- |
+| `pnpm lint`        | Roda o ESLint                                 |
+| `pnpm typecheck`   | Confere os tipos com o TypeScript             |
+| `pnpm test`        | Roda os testes unitários (Vitest)             |
+| `pnpm test:e2e`    | Gera o build e roda os testes e2e             |
+| `pnpm screenshots` | Gera as capturas de tela das lojas            |
+| `pnpm build`       | Gera o build para Chromium em `.output`       |
+| `pnpm zip`         | Gera o `.zip` do build (`zip:firefox` também) |
 
 Os testes e2e abrem um Chromium de verdade com a extensão carregada e um servidor HTTPS local no lugar do YouTube, então não acessam a internet. Na primeira vez, instale o navegador do Playwright com `pnpm exec playwright install chromium`. Eles também precisam do `openssl` no sistema. O Firefox não entra nos testes automáticos, porque o Playwright não carrega extensões nele, e segue o [checklist manual](docs/checklist-manual.md).
 
@@ -70,6 +71,22 @@ Os testes e2e abrem um Chromium de verdade com a extensão carregada e um servid
 
 O navegador descreve a permissão `webNavigation` como "ler o histórico de navegação". A extensão só olha endereços de `www.youtube.com` e não envia nada para fora do navegador.
 
+## Privacidade
+
+A extensão não coleta nem envia dados. A única coisa guardada é a aba escolhida para cada canal, no seu navegador. A política completa, em português e inglês, está em [docs/PRIVACY.md](docs/PRIVACY.md).
+
+## Gerar os arquivos para publicação
+
+Ambiente: Linux, Node 22 (versão em [.nvmrc](.nvmrc)) e pnpm 9 ou mais novo (o projeto é desenvolvido com pnpm 11). Os comandos abaixo geram, em `.output/`, o zip da extensão e, no Firefox, também o zip do código-fonte:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm zip            # Chrome e Brave
+pnpm zip:firefox    # Firefox
+```
+
+Os textos, o ícone e o passo a passo de envio para as lojas estão em [docs/publicacao](docs/publicacao/guia-de-envio.md).
+
 ## Contribuição
 
 O trabalho acontece em branches `feat/*` com pull request para a `main`. Os commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/), e um hook do Husky recusa mensagens fora do padrão. O CI do GitHub Actions roda formatação, lint, tipos, testes unitários, os dois builds e os testes e2e em cada PR. As mudanças ficam registradas no [CHANGELOG](CHANGELOG.md) e o passo a passo de uma versão está em [docs/release.md](docs/release.md). Bugs e sugestões vão em [issues](https://github.com/jonatas-melo-silva/channel-landing/issues).
@@ -81,3 +98,5 @@ MIT. Veja o arquivo [LICENSE](LICENSE).
 ## Autor
 
 [Jonatas Melo Silva](https://github.com/jonatas-melo-silva)
+
+Channel Landing não tem relação com o YouTube nem com o Google. YouTube é marca registrada do Google LLC.
