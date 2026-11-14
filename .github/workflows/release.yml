@@ -1,0 +1,59 @@
+name: Release
+
+# Roda ao publicar uma tag no formato v0.1.0.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+env:
+  HUSKY: '0'
+
+jobs:
+  release:
+    name: Gerar os zips e criar o release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # A versão do manifest sai do package.json, então a tag precisa ser a mesma.
+      - name: Conferir a versão
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "A tag ${GITHUB_REF_NAME} não bate com a versão ${version} do package.json."
+            exit 1
+          fi
+
+      - name: Lint, tipos e testes
+        run: |
+          pnpm lint
+          pnpm typecheck
+          pnpm test
+
+      - name: Gerar os zips
+        run: |
+          pnpm zip
+          pnpm zip:firefox
+          ls -l .output/*.zip
+
+      - name: Criar o release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" .output/*.zip \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes

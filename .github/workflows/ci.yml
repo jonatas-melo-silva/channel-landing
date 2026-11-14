@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Uma execução nova no mesmo PR cancela a anterior que ainda está rodando.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # O hook do Husky só serve para quem commita na própria máquina.
+  HUSKY: '0'
+
+jobs:
+  check:
+    name: Lint, tipos, testes e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Formatação
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tipos
+        run: pnpm typecheck
+
+      - name: Testes unitários
+        run: pnpm test
+
+      - name: Build para Chromium
+        run: pnpm build
+
+      - name: Build para Firefox
+        run: pnpm build:firefox
+
+  e2e:
+    name: Testes e2e no Chromium
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Instalar o Chromium do Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      # O servidor HTTPS de mentira gera o certificado com o openssl, que já vem no runner.
+      - name: Testes e2e
+        run: pnpm test:e2e
+
+      - name: Guardar os resultados se algo falhar
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-e2e
+          path: test-results/
+          retention-days: 7
