@@ -7,11 +7,26 @@ Extensão para Brave, Chrome e Firefox que abre direto a aba que você escolheu 
 
 ## Status
 
-Em desenvolvimento, sem versão publicada. O trabalho está dividido em fases e o projeto está na fase 7: a extensão funciona (redirecionamento, leitura do canal e popup) e os materiais de publicação estão prontos: ícone, política de privacidade, textos das lojas e guia de envio. O plano completo, com decisões e critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
+A versão 0.1.0 está disponível na página de [Releases](https://github.com/jonatas-melo-silva/channel-landing/releases). Ela ainda não está nas lojas do Chrome e do Firefox: os textos, o ícone e o passo a passo de envio estão prontos em [docs/publicacao](docs/publicacao/guia-de-envio.md). O plano do projeto, com as decisões e os critérios de aceite de cada fase, está em [docs/PRP.md](docs/PRP.md).
 
-## Como vai funcionar
+## Como funciona
 
 Cada canal guarda a própria preferência, e Vídeos é o padrão. O popup da extensão lista as abas do canal aberto (Início, Vídeos, Ao vivo, Playlists, Posts e, quando o canal tiver, Podcasts, Cursos e Loja) e só uma pode ficar escolhida por vez. Se a aba escolhida não existir em algum canal, a extensão leva para Vídeos.
+
+![Popup da extensão num canal com todas as abas](docs/publicacao/capturas/1-canal-completo.jpg)
+
+<details>
+<summary>Outros estados do popup</summary>
+
+Canal sem Podcasts, Cursos e Loja:
+
+![Popup num canal só com as abas padrão](docs/publicacao/capturas/2-canal-basico.jpg)
+
+Fora de um canal:
+
+![Popup fora de um canal do YouTube](docs/publicacao/capturas/3-fora-de-um-canal.jpg)
+
+</details>
 
 ## Instalação
 
