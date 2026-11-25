@@ -62,7 +62,7 @@ describe('buildRules', () => {
   });
 
   it('ignora valores inválidos', () => {
-    expect(buildRules({ '@x': 'nope' } as unknown as Preferences)).toHaveLength(1);
+    expect(buildRules({ '@x': 'Not Valid' } as unknown as Preferences)).toHaveLength(1);
   });
 
   it('trata o ponto do handle como ponto, não como curinga', () => {

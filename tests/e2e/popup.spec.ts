@@ -58,6 +58,38 @@ test.describe('popup de um canal', () => {
     await expect(basicPopup.getByRole('switch', { name: 'Podcasts' })).toHaveCount(0);
   });
 
+  test('mostra as abas que o canal informa, com o nome do YouTube nas que a extensão não conhece', async ({
+    context,
+    serviceWorker,
+  }) => {
+    const youtube = await context.newPage();
+    await youtube.goto(`${YT}/@variado/videos`);
+    const popup = await openPopup(context, serviceWorker, youtube);
+
+    await expect(switches(popup)).toHaveCount(5);
+    await expect(popup.getByRole('switch', { name: 'Shorts' })).toBeVisible();
+    await expect(popup.getByRole('switch', { name: 'Shows' })).toBeVisible();
+    // A busca do canal não é uma página.
+    await expect(popup.getByRole('switch', { name: 'Search' })).toHaveCount(0);
+  });
+
+  test('escolher uma aba desconhecida guarda e passa a abrir nela', async ({
+    context,
+    serviceWorker,
+  }) => {
+    const youtube = await context.newPage();
+    await youtube.goto(`${YT}/@variado/videos`);
+    const popup = await openPopup(context, serviceWorker, youtube);
+
+    await popup.getByRole('switch', { name: 'Shorts' }).click();
+    await expect.poll(() => active(popup)).toEqual(['Shorts']);
+    expect(await storedPreferences(serviceWorker)).toEqual({ '@variado': 'shorts' });
+
+    const other = await context.newPage();
+    await other.goto(`${YT}/@variado`);
+    await expect(other).toHaveURL(`${YT}/@variado/shorts`);
+  });
+
   test('só um switch fica ligado e desligar o ligado não faz nada', async ({
     context,
     serviceWorker,
@@ -144,9 +176,7 @@ test.describe('estados sem canal', () => {
     await youtube.goto(`${YT}/watch?v=abc`);
     const popup = await openPopup(context, serviceWorker, youtube);
 
-    await expect(
-      popup.getByText('Open a YouTube channel to choose which tab it opens on.'),
-    ).toBeVisible();
+    await expect(popup.getByText(/Open a YouTube channel with an @name address/)).toBeVisible();
     await expect(switches(popup)).toHaveCount(0);
     await expect(popup.getByRole('link', { name: 'Jonatas Melo Silva' })).toBeVisible();
   });

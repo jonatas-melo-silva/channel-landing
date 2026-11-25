@@ -5,8 +5,20 @@ export interface FakeChannel {
   name: string;
   subscribers: string;
   videos: string;
+  /** Abas na ordem do YouTube, com o texto que o site mostra. */
   tabs: PageKey[];
 }
+
+const TITLES: Record<string, string> = {
+  home: 'Home',
+  videos: 'Videos',
+  shorts: 'Shorts',
+  streams: 'Live',
+  shows: 'Shows',
+  playlists: 'Playlists',
+  posts: 'Posts',
+  search: 'Search',
+};
 
 const CORE: PageKey[] = ['home', 'videos', 'streams', 'playlists', 'posts'];
 
@@ -19,6 +31,14 @@ export const CHANNELS: Record<string, FakeChannel> = {
     videos: '350 vídeos',
     tabs: [...CORE, 'podcasts', 'courses', 'store'],
   },
+  // Abas que a extensão não conhece (shorts, shows) e a busca do canal, que não é uma página.
+  '@variado': {
+    handle: '@Variado',
+    name: 'Canal Variado',
+    subscribers: '300 inscritos',
+    videos: '12 vídeos',
+    tabs: ['home', 'videos', 'shorts', 'shows', 'playlists', 'search'],
+  },
   '@basico': {
     handle: '@Basico',
     name: 'Canal Básico',
@@ -29,9 +49,14 @@ export const CHANNELS: Record<string, FakeChannel> = {
 };
 
 function tabRenderer(handle: string, page: PageKey) {
-  const path = getPage(page).path;
-  const url = path === '' ? `/${handle}` : `/${handle}/${path}`;
-  return { tabRenderer: { endpoint: { commandMetadata: { webCommandMetadata: { url } } } } };
+  // O YouTube usa /@handle/featured para o Início.
+  const url = page === 'home' ? `/${handle}/featured` : `/${handle}/${getPage(page).path}`;
+  return {
+    tabRenderer: {
+      title: TITLES[page] ?? page,
+      endpoint: { commandMetadata: { webCommandMetadata: { url } } },
+    },
+  };
 }
 
 /** Dados no formato de `ytInitialData`, só com os campos que a extensão lê. */
@@ -84,7 +109,9 @@ function initialData(channel: FakeChannel) {
  */
 export function renderPage(pathname: string): string {
   const segment = pathname.split('/').filter(Boolean)[0] ?? '';
-  const channel = CHANNELS[decodeURIComponent(segment).toLowerCase()];
+  // Endereço antigo (`/nome/videos`) leva ao mesmo canal, como acontece com @Adrenaline.
+  const name = decodeURIComponent(segment).toLowerCase();
+  const channel = CHANNELS[name] ?? CHANNELS[`@${name}`];
   // `<` escapado para o JSON nunca fechar o script antes da hora.
   const data = channel ? JSON.stringify(initialData(channel)).replace(/</g, '\\u003c') : null;
 

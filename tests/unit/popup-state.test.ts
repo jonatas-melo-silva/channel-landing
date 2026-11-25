@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { ChannelInfo } from '@/lib/channel';
-import { PAGE_KEYS, type PageKey } from '@/lib/pages';
-import { activePage, toViewState, visiblePages } from '@/lib/popup-state';
+import type { ChannelInfo, RawTab } from '@/lib/channel';
+import { activePage, popupPages, toViewState } from '@/lib/popup-state';
 
 const channel: ChannelInfo = {
   key: '@x',
@@ -12,7 +11,13 @@ const channel: ChannelInfo = {
   tabs: null,
 };
 
-const keys = (tabs: PageKey[] | null) => visiblePages(tabs).map((page) => page.key);
+const raw = (title: string, path: string): RawTab => ({
+  title,
+  url: `/@x${path}`,
+  selected: false,
+});
+
+const keys = (rawTabs: RawTab[] | null) => popupPages({ rawTabs }).map((page) => page.key);
 
 describe('toViewState', () => {
   it('canal lido vira ready', () => {
@@ -25,48 +30,70 @@ describe('toViewState', () => {
   });
 });
 
-describe('visiblePages', () => {
-  it('sem lista de abas mostra só as padrão, na ordem do popup', () => {
+describe('popupPages', () => {
+  it('sem lista de abas mostra só as páginas padrão, na ordem do popup', () => {
     expect(keys(null)).toEqual(['home', 'videos', 'streams', 'playlists', 'posts']);
+    expect(keys([])).toEqual(['home', 'videos', 'streams', 'playlists', 'posts']);
   });
 
-  it('as padrão aparecem mesmo que o canal não tenha a aba', () => {
-    expect(keys(['home', 'videos'])).toEqual(['home', 'videos', 'streams', 'playlists', 'posts']);
+  it('mostra as abas do canal na ordem do YouTube, inclusive as que a extensão não conhece', () => {
+    const pages = popupPages({
+      rawTabs: [
+        raw('Início', '/featured'),
+        raw('Vídeos', '/videos'),
+        raw('Shorts', '/shorts'),
+        raw('Programas', '/shows'),
+        raw('Playlists', '/playlists'),
+      ],
+    });
+    expect(pages).toEqual([
+      { key: 'home', title: 'Início' },
+      { key: 'videos', title: 'Vídeos' },
+      { key: 'shorts', title: 'Shorts' },
+      { key: 'shows', title: 'Programas' },
+      { key: 'playlists', title: 'Playlists' },
+    ]);
   });
 
-  it('as opcionais só aparecem quando o canal tem', () => {
-    expect(keys(['home', 'videos', 'podcasts', 'store'])).toEqual([
+  it('não mostra a busca do canal nem repete abas', () => {
+    expect(
+      keys([
+        raw('Início', '/featured'),
+        raw('Vídeos', '/videos'),
+        raw('Vídeos de novo', '/videos'),
+        raw('Pesquisar', '/search'),
+      ]),
+    ).toEqual(['home', 'videos']);
+  });
+
+  it('ignora abas de outro endereço', () => {
+    expect(keys([{ title: 'X', url: '/@x/videos/extra', selected: false }])).toEqual([
       'home',
       'videos',
       'streams',
       'playlists',
       'posts',
-      'podcasts',
-      'store',
     ]);
-  });
-
-  it('com todas as abas mostra as oito', () => {
-    expect(keys([...PAGE_KEYS])).toEqual([...PAGE_KEYS]);
   });
 });
 
 describe('activePage', () => {
+  const pages = popupPages({
+    rawTabs: [raw('Início', '/featured'), raw('Vídeos', '/videos'), raw('Shorts', '/shorts')],
+  });
+
   it('mantém a preferência quando a página está na lista', () => {
-    expect(activePage('streams', null)).toBe('streams');
-    expect(activePage('podcasts', ['home', 'videos', 'podcasts'])).toBe('podcasts');
+    expect(activePage('shorts', pages)).toBe('shorts');
   });
 
   it('cai em Vídeos quando a preferência é de uma página que o canal não tem', () => {
-    expect(activePage('podcasts', ['home', 'videos'])).toBe('videos');
-    expect(activePage('store', null)).toBe('videos');
+    expect(activePage('podcasts', pages)).toBe('videos');
   });
 
-  it('sempre devolve uma página que está visível', () => {
-    for (const tabs of [null, ['home', 'videos'], [...PAGE_KEYS]] as (PageKey[] | null)[]) {
-      for (const preference of PAGE_KEYS) {
-        expect(keys(tabs)).toContain(activePage(preference, tabs));
-      }
-    }
+  it('sem Vídeos na lista cai na primeira página', () => {
+    const noVideos = popupPages({
+      rawTabs: [raw('Início', '/featured'), raw('Shorts', '/shorts')],
+    });
+    expect(activePage('store', noVideos)).toBe('home');
   });
 });

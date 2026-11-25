@@ -64,6 +64,13 @@ test.describe('leitura dos dados do canal', () => {
           subscribers: '12 mil inscritos',
           videos: '48 vídeos',
           tabs: ['home', 'videos', 'streams', 'playlists', 'posts'],
+          rawTabs: [
+            { title: 'Home', url: '/@Basico/featured', selected: false },
+            { title: 'Videos', url: '/@Basico/videos', selected: false },
+            { title: 'Live', url: '/@Basico/streams', selected: false },
+            { title: 'Playlists', url: '/@Basico/playlists', selected: false },
+            { title: 'Posts', url: '/@Basico/posts', selected: false },
+          ],
         },
       });
     expect(errors).toEqual([]);

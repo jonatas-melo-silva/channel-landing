@@ -2,6 +2,16 @@
 
 Todas as mudanças relevantes do projeto ficam neste arquivo. O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e as versões seguem o [versionamento semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Alterado
+
+- O popup lista as abas que o YouTube informa para o canal, na ordem dele, e não só as oito conhecidas. Abas como Shorts e Programas aparecem com o nome que o YouTube dá a elas e podem ser escolhidas como destino. A busca do canal não aparece.
+
+### Corrigido
+
+- Em canais que o YouTube mostra com endereço antigo, sem `@` (como `/adrenaline/videos`), clicar em Início levava de volta para Vídeos e a página inicial nunca carregava.
+
 ## [0.1.0] - 2026-11-14
 
 Primeira versão.

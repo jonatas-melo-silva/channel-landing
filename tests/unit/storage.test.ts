@@ -30,7 +30,7 @@ describe('storage', () => {
 
   it('ignora lixo que estiver no storage', async () => {
     await fakeBrowser.storage.local.set({
-      preferences: { '@x': 'nope', '@y': 'posts', lixo: 'streams' },
+      preferences: { '@x': 'Not Valid', '@y': 'posts', lixo: 'streams' },
     });
     expect(await loadPreferences()).toEqual({ '@y': 'posts' });
   });

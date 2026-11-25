@@ -16,7 +16,7 @@ O projeto nasce com padrão profissional: ambiente reproduzível, testes, Git, G
 | --- | --- |
 | Escopo da preferência | Por canal. Canal sem preferência salva usa "Vídeos". |
 | Navegadores | Brave (Chromium) como principal e Firefox. Mesmo código, dois builds. |
-| Páginas opcionais | Podcasts, Cursos e Loja só aparecem no popup quando o canal tem a aba. |
+| Páginas do canal | O popup lista as abas que o YouTube informa para o canal. Podcasts, Cursos e Loja só aparecem quando o canal tem a aba, e abas que a extensão não conhece (Shorts, Programas) usam o nome do YouTube. A busca do canal não entra. |
 | Páginas padrão | Início, Vídeos, Ao vivo, Playlists e Posts aparecem sempre. |
 | Página inexistente no canal | Se a aba escolhida não existir, vai para Vídeos. |
 | Idioma | Segue o idioma do navegador (português do Brasil e inglês). |

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ChannelHeader } from '@/components/popup/ChannelHeader';
+import { DebugTabs } from '@/components/popup/DebugTabs';
 import { Footer } from '@/components/popup/Footer';
 import { PageList } from '@/components/popup/PageList';
 import { Separator } from '@/components/ui/separator';
 import { getActiveChannel } from '@/lib/channel-client';
 import { t } from '@/lib/i18n';
 import type { PageKey } from '@/lib/pages';
-import { activePage, toViewState, type ViewState } from '@/lib/popup-state';
+import { activePage, popupPages, toViewState, type ViewState } from '@/lib/popup-state';
 import { getChannelPage, type Preferences } from '@/lib/preferences';
 import { loadPreferences, savePreference, watchPreferences } from '@/lib/storage';
 
@@ -42,6 +43,8 @@ export default function App() {
     void savePreference(key, page).then(setPrefs);
   };
 
+  const pages = view.status === 'ready' ? popupPages(view.channel) : [];
+
   return (
     <main className="w-80">
       {view.status === 'ready' && prefs !== null ? (
@@ -49,10 +52,11 @@ export default function App() {
           <ChannelHeader channel={view.channel} />
           <Separator />
           <PageList
-            tabs={view.channel.tabs}
-            active={activePage(getChannelPage(prefs, view.channel.key), view.channel.tabs)}
+            pages={pages}
+            active={activePage(getChannelPage(prefs, view.channel.key), pages)}
             onSelect={(page) => select(view.channel.key, page)}
           />
+          {import.meta.env.DEV && <DebugTabs rawTabs={view.channel.rawTabs} />}
         </>
       ) : (
         <StatusMessage
