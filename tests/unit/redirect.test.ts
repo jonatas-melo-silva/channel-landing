@@ -49,7 +49,7 @@ describe('resolveTarget com preferência', () => {
   });
 
   it('usa Vídeos quando o valor salvo é inválido', () => {
-    const prefs = { '@x': 'nope' } as unknown as Preferences;
+    const prefs = { '@x': 'Not Valid' } as unknown as Preferences;
     expect(resolveTarget(`${YT}/@x`, prefs)).toBe(`${YT}/@x/videos`);
   });
 

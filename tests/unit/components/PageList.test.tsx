@@ -2,17 +2,26 @@ import { useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { PageList } from '@/components/popup/PageList';
-import { PAGE_KEYS, type PageKey } from '@/lib/pages';
+import type { PageKey } from '@/lib/pages';
+import type { PopupPage } from '@/lib/popup-state';
 
 // Os textos viram a própria chave, para o teste não depender do idioma do navegador.
 vi.mock('@/lib/i18n', () => ({ t: (key: string) => key }));
 
-const labels = () => screen.getAllByRole('switch').map((node) => node.id);
+const standard: PopupPage[] = [
+  { key: 'home', title: null },
+  { key: 'videos', title: null },
+  { key: 'streams', title: null },
+  { key: 'playlists', title: null },
+  { key: 'posts', title: null },
+];
+
+const ids = () => screen.getAllByRole('switch').map((node) => node.id);
 
 describe('PageList', () => {
-  it('sem lista de abas mostra só as cinco páginas padrão', () => {
-    render(<PageList tabs={null} active="videos" onSelect={() => {}} />);
-    expect(labels()).toEqual([
+  it('mostra uma linha por página, na ordem recebida', () => {
+    render(<PageList pages={standard} active="videos" onSelect={() => {}} />);
+    expect(ids()).toEqual([
       'page-home',
       'page-videos',
       'page-streams',
@@ -21,40 +30,37 @@ describe('PageList', () => {
     ]);
   });
 
-  it('mostra as páginas opcionais só quando o canal as tem', () => {
+  it('páginas conhecidas usam o texto da extensão e as desconhecidas o nome do YouTube', () => {
     render(
       <PageList
-        tabs={['home', 'videos', 'podcasts', 'store']}
+        pages={[
+          { key: 'videos', title: 'Vídeos' },
+          { key: 'shorts', title: 'Shorts' },
+          { key: 'shows', title: 'Programas' },
+        ]}
         active="videos"
         onSelect={() => {}}
       />,
     );
-    expect(labels()).toEqual([
-      'page-home',
-      'page-videos',
-      'page-streams',
-      'page-playlists',
-      'page-posts',
-      'page-podcasts',
-      'page-store',
-    ]);
-    expect(screen.queryByRole('switch', { name: 'pageCourses' })).not.toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'pageVideos' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Shorts' })).toBeInTheDocument();
+    expect(screen.getByRole('switch', { name: 'Programas' })).toBeInTheDocument();
   });
 
-  it('com todas as abas mostra as oito páginas', () => {
-    render(<PageList tabs={[...PAGE_KEYS]} active="videos" onSelect={() => {}} />);
-    expect(screen.getAllByRole('switch')).toHaveLength(8);
+  it('aba desconhecida sem nome mostra a própria chave', () => {
+    render(<PageList pages={[{ key: 'shows', title: null }]} active="shows" onSelect={() => {}} />);
+    expect(screen.getByRole('switch', { name: 'shows' })).toBeChecked();
   });
 
   it('só a página ativa fica ligada', () => {
-    render(<PageList tabs={null} active="streams" onSelect={() => {}} />);
+    render(<PageList pages={standard} active="streams" onSelect={() => {}} />);
     expect(screen.getByRole('switch', { name: 'pageStreams' })).toBeChecked();
     expect(screen.getAllByRole('switch', { checked: true })).toHaveLength(1);
   });
 
   it('ligar outra página avisa qual foi escolhida', () => {
     const onSelect = vi.fn();
-    render(<PageList tabs={null} active="videos" onSelect={onSelect} />);
+    render(<PageList pages={standard} active="videos" onSelect={onSelect} />);
 
     fireEvent.click(screen.getByRole('switch', { name: 'pagePosts' }));
 
@@ -64,7 +70,7 @@ describe('PageList', () => {
 
   it('clicar na página que já está ligada não faz nada', () => {
     const onSelect = vi.fn();
-    render(<PageList tabs={null} active="videos" onSelect={onSelect} />);
+    render(<PageList pages={standard} active="videos" onSelect={onSelect} />);
 
     fireEvent.click(screen.getByRole('switch', { name: 'pageVideos' }));
 
@@ -75,15 +81,13 @@ describe('PageList', () => {
   it('só um switch fica ligado por vez ao trocar de página', () => {
     function Controlled() {
       const [active, setActive] = useState<PageKey>('videos');
-      return <PageList tabs={null} active={active} onSelect={setActive} />;
+      return <PageList pages={standard} active={active} onSelect={setActive} />;
     }
     render(<Controlled />);
 
     fireEvent.click(screen.getByRole('switch', { name: 'pageStreams' }));
-    expect(screen.getByRole('switch', { name: 'pageStreams' })).toBeChecked();
-    expect(screen.getAllByRole('switch', { checked: true })).toHaveLength(1);
-
     fireEvent.click(screen.getByRole('switch', { name: 'pagePlaylists' }));
+
     expect(screen.getByRole('switch', { name: 'pagePlaylists' })).toBeChecked();
     expect(screen.getByRole('switch', { name: 'pageStreams' })).not.toBeChecked();
     expect(screen.getAllByRole('switch', { checked: true })).toHaveLength(1);
@@ -91,7 +95,7 @@ describe('PageList', () => {
 
   it('o rótulo também liga a página', () => {
     const onSelect = vi.fn();
-    render(<PageList tabs={null} active="videos" onSelect={onSelect} />);
+    render(<PageList pages={standard} active="videos" onSelect={onSelect} />);
 
     fireEvent.click(screen.getByText('pageStreams'));
 

@@ -54,4 +54,19 @@ describe('decideNavigation', () => {
     }
     expect(redirects).toEqual([null, `${YT}/@x/videos`, null, null, null, `${YT}/@y/videos`]);
   });
+
+  it('guarda o canal de endereços antigos, sem @', () => {
+    expect(decideNavigation(`${YT}/adrenaline/videos`, {}, null)).toEqual({
+      redirectTo: null,
+      channel: '@adrenaline',
+    });
+  });
+
+  it('Início dentro de um canal de endereço antigo não redireciona', () => {
+    const prefs: Preferences = { '@adrenaline': 'videos' };
+    // O YouTube leva /@Adrenaline/videos para /adrenaline/videos; clicar em Início volta a /@Adrenaline/featured.
+    const first = decideNavigation(`${YT}/adrenaline/videos`, prefs, null);
+    const second = decideNavigation(`${YT}/@Adrenaline/featured`, prefs, first.channel);
+    expect(second.redirectTo).toBeNull();
+  });
 });

@@ -16,7 +16,7 @@ describe('getChannelPage', () => {
   });
 
   it('usa Vídeos quando o valor salvo é inválido', () => {
-    expect(getChannelPage({ '@x': 'nope' } as unknown as Preferences, '@x')).toBe('videos');
+    expect(getChannelPage({ '@x': 'Not Valid' } as unknown as Preferences, '@x')).toBe('videos');
   });
 
   it('não confunde o nome de um canal com propriedades de objeto', () => {
@@ -64,7 +64,9 @@ describe('sanitizePreferences', () => {
   });
 
   it('descarta páginas desconhecidas e chaves que não são handle', () => {
-    expect(sanitizePreferences({ '@x': 'nope', lixo: 'streams', '@y': 'posts', '@z': 3 })).toEqual({
+    expect(
+      sanitizePreferences({ '@x': 'Not Valid', lixo: 'streams', '@y': 'posts', '@z': 3 }),
+    ).toEqual({
       '@y': 'posts',
     });
   });

@@ -1,4 +1,12 @@
-import { findPageBySegment, type PageKey } from './pages';
+import { pageKeyFromSegment, type PageKey } from './pages';
+
+/** Uma aba do jeito que o YouTube a informa, antes de a extensão decidir se a conhece. */
+export interface RawTab {
+  title: string | null;
+  /** Caminho da aba, como no YouTube (`/@canal/videos`). */
+  url: string;
+  selected: boolean;
+}
 
 /** Dados do canal que o popup mostra. */
 export interface ChannelInfo {
@@ -11,6 +19,8 @@ export interface ChannelInfo {
   videos: string | null;
   /** Abas que o canal tem, ou null quando não foi possível ler. */
   tabs: PageKey[] | null;
+  /** Todas as abas que o YouTube informou, sem filtro. Serve ao painel de teste do popup. */
+  rawTabs?: RawTab[] | null;
 }
 
 type Json = Record<string, unknown>;
@@ -129,21 +139,41 @@ function legacyText(data: unknown, field: string): string | null {
 const SUBSCRIBERS = /inscrit|subscri|suscri|abonn|iscritt|abonent/i;
 const VIDEOS = /v[ií]de[oe]|vid[eé]os?/i;
 
-/** Lê as abas pelas URLs de cada `tabRenderer`. Devolve null se não achar nenhuma. */
-export function extractTabs(data: unknown): PageKey[] | null {
+/** Todas as abas informadas pelo YouTube, na ordem, sem descartar as que a extensão não usa. */
+export function extractRawTabs(data: unknown): RawTab[] | null {
   const tabs = dig(data, 'contents', 'twoColumnBrowseResultsRenderer', 'tabs');
   if (!Array.isArray(tabs)) return null;
 
-  const found = new Set<PageKey>();
+  const found: RawTab[] = [];
   for (const tab of tabs) {
     const renderer = dig(tab, 'tabRenderer') ?? dig(tab, 'expandableTabRenderer');
     const url = asString(dig(renderer, 'endpoint', 'commandMetadata', 'webCommandMetadata', 'url'));
     if (url === null) continue;
+    found.push({
+      title: asString(dig(renderer, 'title')),
+      url,
+      selected: dig(renderer, 'selected') === true,
+    });
+  }
+  return found.length > 0 ? found : null;
+}
 
-    const segments = url.split(/[?#]/)[0]?.split('/').filter(Boolean) ?? [];
-    if (!segments[0]?.startsWith('@')) continue;
-    const page = findPageBySegment(segments[1] ?? '');
-    if (page && segments.length <= 2) found.add(page.key);
+/** Página que o endereço de uma aba (`/@canal/shorts`) representa, ou null se não for uma. */
+export function tabPageKey(url: string): PageKey | null {
+  const segments = url.split(/[?#]/)[0]?.split('/').filter(Boolean) ?? [];
+  if (!segments[0]?.startsWith('@') || segments.length > 2) return null;
+  return pageKeyFromSegment(segments[1] ?? '');
+}
+
+/**
+ * Páginas do canal, na ordem do YouTube, a partir das abas que ele informa. Devolve null se
+ * não achar nenhuma.
+ */
+export function extractTabs(data: unknown): PageKey[] | null {
+  const found = new Set<PageKey>();
+  for (const tab of extractRawTabs(data) ?? []) {
+    const page = tabPageKey(tab.url);
+    if (page !== null) found.add(page);
   }
   return found.size > 0 ? [...found] : null;
 }
@@ -162,5 +192,6 @@ export function extractChannel(data: unknown, key: string): ChannelInfo {
       texts.find((text) => SUBSCRIBERS.test(text)) ?? legacyText(data, 'subscriberCountText'),
     videos: texts.find((text) => VIDEOS.test(text)) ?? legacyText(data, 'videosCountText'),
     tabs: extractTabs(data),
+    rawTabs: extractRawTabs(data),
   };
 }

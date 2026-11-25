@@ -9,7 +9,7 @@
     "message": "Reading the channel..."
   },
   "popupNotChannel": {
-    "message": "Open a YouTube channel to choose which tab it opens on."
+    "message": "Open a YouTube channel with an @name address to choose its tab. Channels with an old address, without @, are not supported yet."
   },
   "popupError": {
     "message": "Could not read this channel. Reload the YouTube tab and try again."

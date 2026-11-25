@@ -120,6 +120,18 @@ test.describe('navegação interna do YouTube (webNavigation)', () => {
     await expect(page).toHaveURL(`${YT}/@kipperdev`);
   });
 
+  test('Início num canal de endereço antigo (sem @) não é desfeito', async ({ context }) => {
+    // O YouTube leva /@Variado/videos para /variado/videos. Clicar em Início volta a
+    // /@Variado/featured, que continua sendo o mesmo canal.
+    const page = await context.newPage();
+
+    await page.goto(`${YT}/variado/videos`);
+    await spaGo(page, '/@Variado/featured');
+
+    await page.waitForTimeout(1000);
+    await expect(page).toHaveURL(`${YT}/@Variado/featured`);
+  });
+
   test('canal com preferência Início não é redirecionado', async ({ context, setPreferences }) => {
     await setPreferences({ '@kipperdev': 'home' });
     const page = await context.newPage();

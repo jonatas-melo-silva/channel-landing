@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { dataHandle, extractChannel, extractTabs, parseInitialData } from '@/lib/channel';
+import {
+  dataHandle,
+  extractChannel,
+  extractRawTabs,
+  extractTabs,
+  parseInitialData,
+} from '@/lib/channel';
 
 const tab = (url: string) => ({
   tabRenderer: { endpoint: { commandMetadata: { webCommandMetadata: { url } } } },
@@ -75,7 +81,14 @@ describe('extractChannel', () => {
       avatar: 'https://img/big',
       subscribers: '12,3 mil inscritos',
       videos: '245 vídeos',
-      tabs: ['home', 'videos', 'streams', 'playlists'],
+      tabs: ['home', 'videos', 'streams', 'playlists', 'community'],
+      rawTabs: [
+        { title: null, url: '/@KipperDev', selected: false },
+        { title: null, url: '/@KipperDev/videos', selected: false },
+        { title: null, url: '/@KipperDev/streams', selected: false },
+        { title: null, url: '/@KipperDev/playlists', selected: false },
+        { title: null, url: '/@KipperDev/community', selected: false },
+      ],
     });
   });
 
@@ -94,6 +107,7 @@ describe('extractChannel', () => {
       subscribers: null,
       videos: null,
       tabs: null,
+      rawTabs: null,
     });
     expect(extractChannel(null, '@x').name).toBeNull();
   });
@@ -129,6 +143,21 @@ describe('extractTabs', () => {
     expect(tabs).toEqual(['home', 'videos', 'podcasts', 'courses', 'store']);
   });
 
+  it('inclui abas que a extensão não conhece e deixa de fora a busca', () => {
+    const tabs = extractTabs(
+      sample({
+        tabs: [
+          tab('/@a'),
+          tab('/@a/videos'),
+          tab('/@a/shorts'),
+          tab('/@a/shows'),
+          tab('/@a/search'),
+        ],
+      }),
+    );
+    expect(tabs).toEqual(['home', 'videos', 'shorts', 'shows']);
+  });
+
   it('aceita expandableTabRenderer, featured como Início e ignora o que não é aba', () => {
     const data = {
       contents: {
@@ -152,6 +181,49 @@ describe('extractTabs', () => {
 
   it('devolve null sem abas', () => {
     expect(extractTabs({ contents: { twoColumnBrowseResultsRenderer: { tabs: [] } } })).toBeNull();
+  });
+});
+
+describe('extractRawTabs', () => {
+  const titled = (title: string, url: string, selected = false) => ({
+    tabRenderer: {
+      title,
+      selected,
+      endpoint: { commandMetadata: { webCommandMetadata: { url } } },
+    },
+  });
+
+  it('devolve todas as abas como o YouTube informou', () => {
+    const data = {
+      contents: {
+        twoColumnBrowseResultsRenderer: {
+          tabs: [
+            titled('Home', '/@a', true),
+            titled('Videos', '/@a/videos'),
+            titled('Shorts', '/@a/shorts'),
+            titled('Community', '/@a/community'),
+          ],
+        },
+      },
+    };
+
+    expect(extractRawTabs(data)).toEqual([
+      { title: 'Home', url: '/@a', selected: true },
+      { title: 'Videos', url: '/@a/videos', selected: false },
+      { title: 'Shorts', url: '/@a/shorts', selected: false },
+      { title: 'Community', url: '/@a/community', selected: false },
+    ]);
+    // A leitura que o redirecionamento usa guarda só os endereços que são uma página.
+    expect(extractTabs(data)).toEqual(['home', 'videos', 'shorts', 'community']);
+  });
+
+  it('pula o que não tem endereço e devolve null sem nenhuma aba', () => {
+    expect(
+      extractRawTabs({
+        contents: { twoColumnBrowseResultsRenderer: { tabs: [{ tabRenderer: {} }, null] } },
+      }),
+    ).toBeNull();
+    expect(extractRawTabs({})).toBeNull();
   });
 });
 

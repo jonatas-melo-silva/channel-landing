@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeHandle, parseChannelUrl } from '@/lib/handle';
+import { legacyChannelKey, normalizeHandle, parseChannelUrl } from '@/lib/handle';
 
 const YT = 'https://www.youtube.com';
 
@@ -44,6 +44,9 @@ describe('parseChannelUrl', () => {
     [`${YT}/@kipperdev/courses`, 'courses', false],
     [`${YT}/@kipperdev/store`, 'store', false],
     [`${YT}/@kipperdev/Videos`, 'videos', false],
+    [`${YT}/@kipperdev/shorts`, 'shorts', false],
+    [`${YT}/@kipperdev/shows`, 'shows', false],
+    [`${YT}/@kipperdev/about`, 'about', false],
   ])('%s é a página %s (entrada: %s)', (url, page, isLanding) => {
     const location = parseChannelUrl(url);
     expect(location?.key).toBe('@kipperdev');
@@ -52,13 +55,11 @@ describe('parseChannelUrl', () => {
   });
 
   it.each([
-    `${YT}/@kipperdev/about`,
-    `${YT}/@kipperdev/community`,
-    `${YT}/@kipperdev/shorts`,
     `${YT}/@kipperdev/search?query=a`,
+    `${YT}/@kipperdev/Pagina%20Nova`,
     `${YT}/@kipperdev/videos/extra`,
     `${YT}/@kipperdev/featured/extra`,
-  ])('%s não é uma aba conhecida nem entrada do canal', (url) => {
+  ])('%s não é uma página nem entrada do canal', (url) => {
     const location = parseChannelUrl(url);
     expect(location?.key).toBe('@kipperdev');
     expect(location?.page).toBeNull();
@@ -103,5 +104,33 @@ describe('parseChannelUrl', () => {
     '',
   ])('devolve null para %j', (url) => {
     expect(parseChannelUrl(url)).toBeNull();
+  });
+});
+
+describe('legacyChannelKey', () => {
+  it.each([
+    [`${YT}/adrenaline`, '@adrenaline'],
+    [`${YT}/Adrenaline/videos`, '@adrenaline'],
+    [`${YT}/adrenaline/featured?si=a`, '@adrenaline'],
+    [`${YT}/c/Adrenaline`, '@adrenaline'],
+    [`${YT}/user/Adrenaline/videos`, '@adrenaline'],
+  ])('%s é o canal %s', (url, key) => {
+    expect(legacyChannelKey(url)).toBe(key);
+  });
+
+  it.each([
+    `${YT}/@adrenaline/videos`,
+    `${YT}/watch?v=abc`,
+    `${YT}/feed/subscriptions`,
+    `${YT}/results?search_query=a`,
+    `${YT}/shorts/abc`,
+    `${YT}/channel/UC123/videos`,
+    `${YT}/c`,
+    `${YT}/`,
+    'https://example.com/adrenaline',
+    'http://www.youtube.com/adrenaline',
+    'nada',
+  ])('%s não é um endereço antigo de canal', (url) => {
+    expect(legacyChannelKey(url)).toBeNull();
   });
 });

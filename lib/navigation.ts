@@ -1,4 +1,4 @@
-import { parseChannelUrl } from './handle';
+import { legacyChannelKey, parseChannelUrl } from './handle';
 import type { Preferences } from './preferences';
 import { resolveTarget } from './redirect';
 
@@ -20,6 +20,6 @@ export function decideNavigation(
 ): NavigationDecision {
   return {
     redirectTo: resolveTarget(url, prefs, previousChannel),
-    channel: parseChannelUrl(url)?.key ?? null,
+    channel: parseChannelUrl(url)?.key ?? legacyChannelKey(url),
   };
 }

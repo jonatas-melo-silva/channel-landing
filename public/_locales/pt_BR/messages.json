@@ -9,7 +9,7 @@
     "message": "Lendo o canal..."
   },
   "popupNotChannel": {
-    "message": "Abra um canal do YouTube para escolher em qual aba ele abre."
+    "message": "Abra um canal do YouTube com endereço @nome para escolher a aba. Canais com endereço antigo, sem @, ainda não são suportados."
   },
   "popupError": {
     "message": "Não foi possível ler este canal. Recarregue a aba do YouTube e tente de novo."
