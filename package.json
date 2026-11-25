@@ -2,7 +2,7 @@
   "name": "channel-landing",
   "description": "Extensão de navegador que abre a aba escolhida de cada canal do YouTube.",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "author": "Jonatas Melo Silva",
